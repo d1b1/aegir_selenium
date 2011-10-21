@@ -1,0 +1,5 @@
+name = Harness
+description = This module provides harnesses for test cases.
+core = 6.x
+package = Aegir Selenium
+version = 6.x-1.0.0

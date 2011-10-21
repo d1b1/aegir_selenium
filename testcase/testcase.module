@@ -1,0 +1,285 @@
+<?php
+// $Id$
+
+/**
+ * Implements the hook_perm()
+ */
+function testcase_perm() {
+  return array(
+    ''
+  );
+}
+
+function testcase_setup_fields() {
+
+  $content_type = 'testcase';
+  module_load_include('inc', 'text', 'text_widget');
+  module_load_include('inc', 'content', 'includes/content.crud');
+  
+  $fields = array();
+  $fields[] = 
+      array (
+	    'type_name' => 'testcase',
+	    'label' => 'Script',
+		'field_name' => 'field_script',
+		'type' => 'text',
+		'widget_type' => 'text_textarea',
+		'change' => 'Change basic information',
+		'weight' => '31',
+		'rows' => '5',
+		'size' => 60,
+		'description' => '',
+		'default_value' => 
+		array (
+		  0 => 
+		  array (
+			'value' => '',
+			'_error_element' => 'default_value_widget][field_script][0][value',
+		  ),
+		),
+		'default_value_php' => '',
+		'default_value_widget' => NULL,
+		'required' => 0,
+		'multiple' => '0',
+		'text_processing' => '0',
+		'max_length' => '',
+		'allowed_values' => '',
+		'allowed_values_php' => '',
+		'op' => 'Save field settings',
+		'module' => 'text',
+		'widget_module' => 'text',
+		'columns' => 
+		array (
+		  'value' => 
+		  array (
+			'type' => 'text',
+			'size' => 'big',
+			'not null' => false,
+			'sortable' => true,
+			'views' => true,
+		  ),
+		),
+		'display_settings' => 
+		array (
+		  'label' => 
+		  array (
+			'format' => 'above',
+			'exclude' => 0,
+		  ),
+		  'teaser' => 
+		  array (
+			'format' => 'default',
+			'exclude' => 0,
+		  ),
+		  'full' => 
+		  array (
+			'format' => 'default',
+			'exclude' => 0,
+		  ),
+		  4 => 
+		  array (
+			'format' => 'default',
+			'exclude' => 0,
+		  ),
+		),
+  );
+
+  foreach ($fields as $idx => $field) {
+    $options = array(
+	  'field_name' => $field['field_name'], 
+	  'type_name'  => $content_type
+	);
+
+    $instances = content_field_instance_read($options);
+
+    if (count($instances)==0) {
+	  content_field_instance_create($field);
+	  drupal_set_message('Adding the ' . $field['field_name'] . ' field.');
+	}
+	else {
+	  drupal_set_message('Unable to add the ' . $field['field_name'] . ' field.');
+	}
+  }
+
+}
+
+/**
+ * Implements the hook_menu()
+ * 
+ */
+function testcase_menu() {
+
+  $items = array();
+
+  $items['admin/settings/as/setuptestcase'] = array(
+    'title'            => t('Setup Test Case Fields'),
+    'description'      => t('Runs the setup script for the CCK fields.'),
+    'page callback'    => 'testcase_setup_fields',
+    'access arguments' => array('list test cases'),
+    'type'             => MENU_NORMAL_ITEM,
+    'weight'           => 100,
+  );
+
+  $items['admin/settings/as/setupharness'] = array(
+    'title'            => t('Setup Harness Fields'),
+    'description'      => t('Runs the setup script for the CCK fields.'),
+    'page callback'    => 'harness_setup_fields',
+    'access arguments' => array('list test cases'),
+    'type'             => MENU_NORMAL_ITEM,
+    'weight'           => 100,
+  );
+
+  return $items;
+}
+
+function testcase_node_info() {
+  return array(
+    'testcase' => array(
+      'name' => t('Test Case'), 
+      'module' => 'testcase', 
+      'description' => t('This provides Test Case Support for Selenium tests.'),
+      'description' => t('Use this content type to create a list. A list is composed of items, content and rankings.'),
+      'has_title' => TRUE,
+      'title_label' => t('Title'),
+      'has_body' => TRUE,
+      'body_label' => t('Description'),
+      'min_word_count' => 0,
+      'locked' => FALSE )
+  );
+}
+
+function testcase_form(&$node, $form_state) {
+
+  $type = node_get_types('type', $node);
+
+  $form['title'] = array(
+    '#type' => 'textfield', 
+    '#title' => check_plain($type->title_label), 
+    '#required' => TRUE,
+  );
+  $form['body'] = array(
+    '#type' => 'textarea', 
+    '#title' => check_plain($type->body_label), 
+    '#rows' => 20, 
+    '#required' => TRUE,
+  );
+  
+  $form['testscript'] = array(
+    '#type' => 'textarea', 
+    '#title' => t('Test Script'), 
+    '#rows' => 20, 
+    '#required' => TRUE,
+  );
+
+  return $form;
+}
+
+function testcase_views_default_views() {
+
+$view = new view;
+$view->name = 'testcases';
+$view->description = '';
+$view->tag = '';
+$view->view_php = '';
+$view->base_table = 'node';
+$view->is_cacheable = FALSE;
+$view->api_version = 2;
+$view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+$handler = $view->new_display('default', 'Defaults', 'default');
+$handler->override_option('fields', array(
+  'title' => array(
+    'label' => 'Title',
+    'alter' => array(
+      'alter_text' => 0,
+      'text' => '',
+      'make_link' => 0,
+      'path' => '',
+      'link_class' => '',
+      'alt' => '',
+      'prefix' => '',
+      'suffix' => '',
+      'target' => '',
+      'help' => '',
+      'trim' => 0,
+      'max_length' => '',
+      'word_boundary' => 1,
+      'ellipsis' => 1,
+      'html' => 0,
+      'strip_tags' => 0,
+    ),
+    'empty' => '',
+    'hide_empty' => 0,
+    'empty_zero' => 0,
+    'link_to_node' => 1,
+    'exclude' => 0,
+    'id' => 'title',
+    'table' => 'node',
+    'field' => 'title',
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('filters', array(
+  'type' => array(
+    'operator' => 'in',
+    'value' => array(
+      'testcase' => 'testcase',
+    ),
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'type',
+    'table' => 'node',
+    'field' => 'type',
+    'relationship' => 'none',
+  ),
+));
+$handler->override_option('access', array(
+  'type' => 'none',
+));
+$handler->override_option('cache', array(
+  'type' => 'none',
+));
+$handler->override_option('title', 'Test Cases');
+$handler->override_option('style_plugin', 'table');
+$handler->override_option('style_options', array(
+  'grouping' => '',
+  'override' => 1,
+  'sticky' => 0,
+  'order' => 'asc',
+  'columns' => array(
+    'title' => 'title',
+  ),
+  'info' => array(
+    'title' => array(
+      'sortable' => 0,
+      'separator' => '',
+    ),
+  ),
+  'default' => '-1',
+));
+$handler = $view->new_display('page', 'Page', 'page_1');
+$handler->override_option('path', 'testcases');
+$handler->override_option('menu', array(
+  'type' => 'normal',
+  'title' => 'Test Cases',
+  'description' => '',
+  'weight' => '0',
+  'name' => 'primary-links',
+));
+$handler->override_option('tab_options', array(
+  'type' => 'none',
+  'title' => '',
+  'description' => '',
+  'weight' => 0,
+  'name' => 'navigation',
+));
+
+  // Add view to list of views to provide.
+  $views[$view->name] = $view;
+
+  // At the end, return array of default views.
+  return $views;
+}

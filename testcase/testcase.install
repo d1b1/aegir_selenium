@@ -1,0 +1,15 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Install Functions.
+ *
+ * Install functions for the module.
+ */
+
+function testcase_install() {
+
+  // Install the custom fields for the testcase content type.
+  testcase_setup_fields();
+
+}

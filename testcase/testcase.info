@@ -1,0 +1,8 @@
+name = Test Case
+description = This module provides the testcase for selenium tests.
+core = 6.x
+dependencies[] = content
+dependencies[] = nodereference
+
+package = Aegir Selenium
+version = 6.x-1.0.0

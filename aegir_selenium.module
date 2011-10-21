@@ -1,0 +1,74 @@
+<?php
+// $Id$
+
+//require_once ( dirname(__FILE__) . '/aegir_selenium.lib.inc');
+
+/**
+ * Implements the hook_perm()
+ */
+function aegir_selenium_perm() {
+  return array(
+    'aegir selenium settings',
+	'list test cases'
+  );
+}
+
+/**
+ * Implements the hook_menu()
+ * 
+ */
+function aegir_selenium_menu() {
+
+  $items = array();
+
+  $items['admin/settings/as'] = array(
+    'title'            => t('Selenium'),
+    'description'      => t('Selenium Settings.'),
+    'position'         => 'left',
+    'page callback'    => 'system_admin_menu_block_page',
+    'access arguments' => array('aegir selenium settings'),
+    'weight'           => -40,
+    'file'             => 'system.admin.inc',
+    'file path'        => drupal_get_path('module', 'system'),
+  );
+
+  $items['admin/settings/as/list'] = array(
+    'title'            => t('List Test Cases'),
+    'description'      => t('List all Selenium Test Cases'),
+    'page callback'    => 'aegir_selenium_list_testcases',
+    'access arguments' => array('list test cases'),
+    'type'             => MENU_NORMAL_ITEM,
+    'weight'           => 100,
+  );
+
+  return $items;
+}
+
+/**
+ * Helper function called by the DNS node tab. This is part of the 
+ * Aegir integration. When the content type is defined, this tab
+ * will lookup the dns entries in the current zone using the site->aliases.
+ * 
+ */
+function aegir_selenium_list_testcases( ) {
+
+  $query = db_query('select * from {node} where type = \'testcase\'');
+
+  $header = array();
+  $header[] = array( 'data' => t('Name') );
+  $header[] = array( 'data' => t('Value') );
+
+  $rows = array();
+  while ($record = db_fetch_array($query)) {
+    $row = array();
+	$row[] = 
+    $row[] = array( 'data' => $record['title'] );
+    $row[] = array( l('Edit', 'node/' . $record['nid']) );
+
+	$rows[] = array( 'data' => $row );
+  }
+
+  $output = theme('table', $header, $rows);
+  
+  return $output;
+}

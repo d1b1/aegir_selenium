@@ -1,0 +1,6 @@
+name = Aegir Selenium
+description = This module provides Aegir Selenium testing features.
+core = 6.x
+package = Aegir Selenium
+version = 6.x-1.0.0
+dependencies[] = views

@@ -1,0 +1,15 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Install Functions.
+ *
+ * Install functions for the module.
+ */
+
+function harness_install() {
+
+  // Install the custom fields for the harness content type.
+  harness_setup_fields();
+
+}
